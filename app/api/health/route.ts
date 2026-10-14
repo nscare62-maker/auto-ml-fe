@@ -13,6 +13,9 @@ export async function GET() {
 
   // 1. Verify PostgreSQL Database (pg / Drizzle pool)
   try {
+    if (!process.env.DATABASE_URL) {
+      throw new Error('DATABASE_URL environment variable is not defined')
+    }
     const startTime = Date.now()
     const pgRes = await pool.query(
       "SELECT current_database() as database, version(), (SELECT count(*) FROM information_schema.tables WHERE table_schema = 'public') as table_count;"
@@ -38,6 +41,9 @@ export async function GET() {
 
   // 2. Verify Supabase Client SDK (@supabase/supabase-js)
   try {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL.includes('placeholder')) {
+      throw new Error('NEXT_PUBLIC_SUPABASE_URL environment variable is not configured')
+    }
     const startTime = Date.now()
     const { count, error, status } = await supabase
       .from('datasets')
