@@ -3,13 +3,14 @@ import { pool } from '@/lib/db'
 
 export const auth = betterAuth({
   database: pool,
+  secret: process.env.BETTER_AUTH_SECRET || 'default-better-auth-secret-key-32chars-min',
   baseURL:
     process.env.BETTER_AUTH_URL ??
     (process.env.VERCEL_PROJECT_PRODUCTION_URL
       ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
       : process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
-        : process.env.V0_RUNTIME_URL),
+        : process.env.V0_RUNTIME_URL ?? 'http://localhost:3000'),
   emailAndPassword: {
     enabled: true,
     autoSignIn: true,
